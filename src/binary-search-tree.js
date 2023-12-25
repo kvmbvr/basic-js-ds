@@ -62,9 +62,6 @@ class BinarySearchTree {
   }
 
   find(data) {
-    if (data === undefined || data === null) {
-      throw new Error("Invalid parameter: 'data' cannot be null or undefined.");
-    }
     return this.#findNode(this.rootNode, data);
   }
 
@@ -84,37 +81,38 @@ class BinarySearchTree {
   }
 
   #removeNode(node, data) {
-    if (node.data === null) {
+    if (node == null) {
       return null;
     }
-
-    if (data < node.data) {
-      node.left = this.#removeNode(node.left, data);
-    } else if (data > node.data) {
-      node.right = this.#removeNode(node.right, data);
-    } else {
-      if (node.left === null && node.right === null) {
+    if (data == node.data) {
+      if (node.left == null && node.right == null) {
         return null;
-      } else if (node.left === null) {
-        return node.right;
-      } else if (node.right === null) {
-        return node.left;
-      } else {
-        let tempNode = this.#findMin(node.right);
-        node.data = tempNode.data;
-        node.right = this.#removeNode(node.right, tempNode.data);
-        return node
       }
-    }
+      if (node.left == null) {
+        return node.right;
+      }
+      if (node.right == null) {
+        return node.left;
+      }
+      let tempNode = node.right;
+      while (tempNode.left !== null) {
+        tempNode = tempNode.left;
+      }
+      node.data = tempNode.data;
 
-    return node;
+      node.right = this.#removeNode(node.right, tempNode.data);
+      return node;
+    } else if (data < node.data) {
+      node.left = this.#removeNode(node.left, data);
+      return node;
+    } else {
+      node.right = this.#removeNode(node.right, data);
+      return node;
+    }
   }
 
   min() {
-    return this.#findMin(this.rootNode);
-  }
-
-  #findMin(node) {
+    let node = this.rootNode
     while (node.left !== null) {
       node = node.left;
     }
@@ -129,15 +127,6 @@ class BinarySearchTree {
     return node.data;
   }
 }
-
-/* const tree = new BinarySearchTree();
-tree.add(5);
-tree.add(6);
-tree.add(7);
-tree.add(4);
-tree.add(3);
-
-console.log(tree.min()); */
 
 module.exports = {
   BinarySearchTree,
